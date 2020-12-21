@@ -1,0 +1,14 @@
+{
+  "title": "The html file should not contain a forbidden class",
+  "type": "CODE_SMELL",
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "10min"
+  },
+  "tags": [
+    "convention",
+    "design-system"
+  ],
+  "defaultSeverity": "Major"
+}
