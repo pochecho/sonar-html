@@ -177,6 +177,7 @@
         <configuration>
           <!-- SonarHTML replaces SonarWeb but we keep the plugin key "web" to make it easier for users to migrate -->
           <pluginKey>web</pluginKey>
+          <pluginClass>org.sonar.plugins.html.DSPlugin</pluginClass>
         </configuration>
       </plugin>
 

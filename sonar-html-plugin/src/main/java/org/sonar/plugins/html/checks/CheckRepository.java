@@ -23,7 +23,7 @@ import java.util.List;
 
 public class CheckRepository {
     public static final String REPOSITORY_KEY = "web";
-    public static final String REPOSITORY_NAME = "Design System Analyzer";
+    public static final String REPOSITORY_NAME = "HTML";
     private static final List<Class<? extends AbstractHtmlCheck>> CHECK_CLASSES = Arrays.asList(
             NotAllowedClassStyleCheck.class
             );
