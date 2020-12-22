@@ -33,7 +33,7 @@ import org.sonar.plugins.html.models.ConfigInvalidElementCheck;
 import org.sonar.plugins.html.models.Issue;
 
 @Rule(key = "NotAllowedClassStyleCheck")
-public class NotAllowedClassStyleCheck extends AbstractPageCheck {
+public class NotAllowedClassStyleCheck extends AbstractHtmlCheck {
 
     private static final Logger LOGGER = Loggers.get(NotAllowedClassStyleCheck.class);
     public static final String ISSUE_FOUNDED_MESSAGE = "The usage of %s class is not allowed, you have to use %s instead.";

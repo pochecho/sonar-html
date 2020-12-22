@@ -19,6 +19,7 @@
 package org.sonar.plugins.html.checks.bds;
 
 import org.sonar.api.rule.RuleKey;
+import org.sonar.plugins.html.models.Source;
 
 public abstract class AbstractHtmlCheck {
     protected RuleKey ruleKey = null;
