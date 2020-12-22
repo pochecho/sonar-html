@@ -44,7 +44,7 @@ public class NotAllowedClassStyleCheck extends AbstractPageCheck {
     @Override
     public void startDocument(List<Node> nodes) {
         ConfigInvalidElementCheck config = new ConfigInvalidElementCheck(
-                "class[ ]{0,1}=[ ]{0,1}[\"|']{1}([\r\n \ta-zA-Z0-9-_]+)[\"|']{1}", ISSUE_FOUNDED_MESSAGE, getHtmlSourceCode().inputFile(),
+                "(.+)", ISSUE_FOUNDED_MESSAGE, getHtmlSourceCode().inputFile(),
                 getRuleKey(), true, this.classStyleReg, LOGGER);
         this.notAllowedElementCheck = new NotAllowedGenericElementCheck(config);
         List<HtmlIssue> issues = this.notAllowedElementCheck.validate();

@@ -35,16 +35,6 @@ public class NotAllowedTagCheckTest {
     @Rule
     public LogTester logTester = new LogTester();
 
-    @Test
-    public void testFailedValidateNoSource() {
-        NotAllowedTagCheck check = new NotAllowedTagCheck();
-        try {
-            check.startDocument(new ArrayList<>());
-            fail("No source code should raise an exception");
-        } catch (IllegalStateException e) {
-            assertEquals("Source code not set, cannot validate anything", e.getMessage());
-        }
-    }
 
     
     @Test

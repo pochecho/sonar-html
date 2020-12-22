@@ -53,13 +53,7 @@ public class NotAllowedGenericElementCheck {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        if (this.config.isMultiline) {
-            issues = this.analyzeMultiline(content);
-        } else {
-            issues = this.analyzeInline(content);
-
-        }
+        issues = this.analyzeInline(content);
 
         return issues;
     }
@@ -85,7 +79,6 @@ public class NotAllowedGenericElementCheck {
 
     private List<HtmlIssue> analyzeInline(String content) {
         List<HtmlIssue> issues = new ArrayList<>();
-
         String[] fragments = content.split("\n");
 
         int i = 1;
@@ -95,6 +88,7 @@ public class NotAllowedGenericElementCheck {
                 for (ChunkReplacement issueClass : issuesClass) {
                     HtmlIssue issue = generateIssue(line, i, issueClass);
                     issues.add(issue);
+                    break;
                 }
             }
             i++;
@@ -176,20 +170,22 @@ public class NotAllowedGenericElementCheck {
 
         ChunkReplacement[] intersection = new ChunkReplacement[0];
         if (matcher.find()) {
+            System.out.println("linea"+ line);
+            System.out.println("matcher"+ matcher.group());
             String[] classes = this.getFormattedClasses(matcher.group(1));
             intersection = this.getIntersection(classes, this.replacement.getReplacements());
         }
         return intersection;
     }
 
-    private List<ChunkReplacement[]> getIssuesPerContent(String line) {
+    private List<ChunkReplacement[]> getIssuesPerContent(String content) {
         final String patterString = this.config.pattern;
 
         Pattern pattern = Pattern.compile(patterString);
-        Matcher matcher = pattern.matcher(line);
+        Matcher matcher = pattern.matcher(content);
 
-        System.out.println("La linea es la siguiente::: " + line);
-        List<ChunkReplacement[]> intersection = new ArrayList<ChunkReplacement[]>();
+        System.out.println("La linea es la siguiente::: " + content);
+        List<ChunkReplacement[]> intersection = null;
         while (matcher.find()) {
             System.out.println("Encontró => " + matcher.group(1));
             String[] classes = this.getFormattedClasses(matcher.group(1));
@@ -203,7 +199,7 @@ public class NotAllowedGenericElementCheck {
         HashSet<ChunkReplacement> set = new HashSet<>();
         for (ChunkReplacement patternString : classesInline) {
             for (String classRuler : classesRulers) {
-                Pattern pattern = Pattern.compile("^" + patternString.getPattern() + "$");
+                Pattern pattern = Pattern.compile(patternString.getPattern());
                 Matcher matcher = pattern.matcher(classRuler);
                 if (matcher.find()) {
                     String[] chunks = new String[matcher.groupCount()];
