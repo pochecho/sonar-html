@@ -47,7 +47,7 @@ public class NotAllowedClassStyleCheckTest {
         check.startDocument(new ArrayList<>());
         // Assert
        
-        assertEquals(2, source.getIssues().size());
+        assertEquals(4, source.getIssues().size());
     }
 
     @Test
@@ -75,9 +75,9 @@ public class NotAllowedClassStyleCheckTest {
         String message = String.format(NotAllowedClassStyleCheck.ISSUE_FOUNDED_MESSAGE,"mat-accordion","bc-accordions-group");
         // Act
         check.startDocument(new ArrayList<>());
-
+        System.out.println("AQUI ESTOY");
         for (HtmlIssue issue : source.getIssues()) {
-            System.out.println(issue);
+            System.out.println(issue.line());
         }
 
         // Assert

@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.sonar.check.Rule;
 import org.sonar.plugins.html.checks.HtmlIssue;
 import org.sonar.plugins.html.models.*;
 
@@ -53,27 +52,42 @@ public class NotAllowedGenericElementCheck {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        issues = this.analyzeInline(content);
+        if (this.config.isMultiline) {
+            issues = this.analyzeMultiline(content);
+        } else {
 
+            issues = this.analyzeInline(content);
+        }
         return issues;
     }
 
     private List<HtmlIssue> analyzeMultiline(String content) {
         List<HtmlIssue> issues = new ArrayList<>();
-        String[] fragments = content.split("\n");
+        List<ClassPropertyWithChunks> issuesClass = getIssuesPerContent(content);
+        int previousLines = 0;
+        String contentTemp = content;
 
-        int i = 1;
-        List<ChunkReplacement[]> issuesClass = getIssuesPerContent(content);
+        for (ClassPropertyWithChunks classProperty : issuesClass) {
 
-        for (ChunkReplacement[] chunkReplacements : issuesClass) {
-            if (chunkReplacements.length > 0) {
-                for (ChunkReplacement issueClass : chunkReplacements) {
-                    HtmlIssue issue = generateIssue(content, i, issueClass);
+            int index = contentTemp.indexOf(classProperty.getClassValue());
+
+            String preContent = contentTemp.substring(0, index);
+
+            String[] preContentFragments = preContent.split("\n");
+
+            if (classProperty.getChunks().length > 0) {
+                for (ChunkReplacement issueClass : classProperty.getChunks()) {
+
+                    HtmlIssue issue = generateIssue(
+                            content,
+                            previousLines + preContentFragments.length,
+                            issueClass);
                     issues.add(issue);
                 }
+                previousLines += preContentFragments.length;
+                contentTemp = contentTemp.substring(index + classProperty.getClassValue().length());
             }
         }
-        i++;
         return issues;
     }
 
@@ -88,7 +102,6 @@ public class NotAllowedGenericElementCheck {
                 for (ChunkReplacement issueClass : issuesClass) {
                     HtmlIssue issue = generateIssue(line, i, issueClass);
                     issues.add(issue);
-                    break;
                 }
             }
             i++;
@@ -178,20 +191,23 @@ public class NotAllowedGenericElementCheck {
         return intersection;
     }
 
-    private List<ChunkReplacement[]> getIssuesPerContent(String content) {
+
+    private List<ClassPropertyWithChunks> getIssuesPerContent(String content) {
         final String patterString = this.config.pattern;
 
         Pattern pattern = Pattern.compile(patterString);
         Matcher matcher = pattern.matcher(content);
+        List<ClassPropertyWithChunks> response = new ArrayList<ClassPropertyWithChunks>();
 
-        System.out.println("La linea es la siguiente::: " + content);
-        List<ChunkReplacement[]> intersection = null;
+        List<ChunkReplacement[]> intersection = new ArrayList<ChunkReplacement[]>();
         while (matcher.find()) {
-            System.out.println("Encontró => " + matcher.group(1));
             String[] classes = this.getFormattedClasses(matcher.group(1));
-            intersection.add(this.getIntersection(classes, this.replacement.getReplacements()));
+
+            ChunkReplacement[] inter = this.getIntersection(classes, this.replacement.getReplacements());
+            response.add(new ClassPropertyWithChunks(inter, matcher.group(1)));
+            intersection.add(inter);
         }
-        return intersection;
+        return response;
     }
 
     private ChunkReplacement[] getIntersection(String[] classesRulers, ChunkReplacement[] classesInline) {
@@ -199,7 +215,7 @@ public class NotAllowedGenericElementCheck {
         HashSet<ChunkReplacement> set = new HashSet<>();
         for (ChunkReplacement patternString : classesInline) {
             for (String classRuler : classesRulers) {
-                Pattern pattern = Pattern.compile(patternString.getPattern());
+                Pattern pattern = Pattern.compile("^" + patternString.getPattern() + "$");
                 Matcher matcher = pattern.matcher(classRuler);
                 if (matcher.find()) {
                     String[] chunks = new String[matcher.groupCount()];

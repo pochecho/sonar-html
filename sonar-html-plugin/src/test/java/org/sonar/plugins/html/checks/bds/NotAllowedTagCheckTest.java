@@ -43,7 +43,7 @@ public class NotAllowedTagCheckTest {
         HtmlSourceCode source = getSource("invalid-tag.html");
         NotAllowedTagCheck check = new NotAllowedTagCheck();
         check.setSourceCode(source);
-        check.classStyleReg = "bc-accordions-group=mat-accordion";
+        check.classStyleReg = "bc-card=card;app-album-card";
         // Act
         check.startDocument(new ArrayList<>());
         for (HtmlIssue issue : source.getIssues()) {
