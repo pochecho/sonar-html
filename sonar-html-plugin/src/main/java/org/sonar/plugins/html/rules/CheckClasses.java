@@ -21,6 +21,9 @@ import java.util.Arrays;
 import java.util.List;
 import org.sonar.plugins.html.checks.attributes.IllegalAttributeCheck;
 import org.sonar.plugins.html.checks.attributes.RequiredAttributeCheck;
+import org.sonar.plugins.html.checks.bds.NotAllowedClassStyleCheck;
+import org.sonar.plugins.html.checks.bds.NotAllowedGenericElementCheck;
+import org.sonar.plugins.html.checks.bds.NotAllowedTagCheck;
 import org.sonar.plugins.html.checks.coding.ComplexityCheck;
 import org.sonar.plugins.html.checks.coding.DoubleQuotesCheck;
 import org.sonar.plugins.html.checks.coding.FileLengthCheck;
@@ -152,7 +155,10 @@ public final class CheckClasses {
     ObjectWithAlternativeContentCheck.class,
     IndistinguishableSimilarElementsCheck.class,
     TableHeaderReferenceCheck.class,
-    ResourceIntegrityCheck.class
+    ResourceIntegrityCheck.class,
+    NotAllowedClassStyleCheck.class,
+    NotAllowedTagCheck.class
+
   );
 
   private CheckClasses() {

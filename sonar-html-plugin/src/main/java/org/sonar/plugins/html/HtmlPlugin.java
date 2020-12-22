@@ -49,6 +49,7 @@ public final class HtmlPlugin implements Plugin {
 
       // web rules repository
       HtmlRulesDefinition.class,
+      HtmlMetrics.class,
 
       // profiles
       SonarWayProfile.class,

@@ -15,27 +15,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sonar.plugins.html;
 
-import org.junit.Test;
-import org.sonar.api.Plugin;
-import org.sonar.api.SonarEdition;
-import org.sonar.api.SonarQubeSide;
-import org.sonar.api.internal.SonarRuntimeImpl;
-import org.sonar.api.utils.Version;
+package org.sonar.plugins.html.checks.bds;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.sonar.api.rule.RuleKey;
 
-/**
- * @author Matthijs Galesloot
- */
-public class HtmlPluginTest {
+public abstract class AbstractHtmlCheck {
+    protected RuleKey ruleKey = null;
 
-  //@Test
-  public void webPluginTester() {
-    Plugin.Context context = new Plugin.Context(SonarRuntimeImpl.forSonarQube(Version.create(7, 9), SonarQubeSide.SERVER, SonarEdition.COMMUNITY));
+    protected Source htmlSource = null;
 
-    new HtmlPlugin().define(context);
-    assertThat(context.getExtensions()).hasSize(8);
-  }
+    public RuleKey getRuleKey() {
+        return ruleKey;
+    }
+
+    public void setRuleKey(RuleKey ruleKey) {
+        this.ruleKey = ruleKey;
+    }
+
+    public Source getHtmlSource() {
+        return htmlSource;
+    }
+
+    public void setHtmlSource(Source source) {
+        this.htmlSource = source;
+    }
+
+    
+    public abstract void validate();
 }

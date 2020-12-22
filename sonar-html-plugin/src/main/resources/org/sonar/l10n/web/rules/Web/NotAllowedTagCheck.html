@@ -1,0 +1,28 @@
+<p>
+    Use this rule to control that html files do not contain a forbidden tag style.
+    The parameters of this template can be defined as a regular expression.
+</p>
+
+<h2>Parameters</h2>
+<dl>
+    <dt>not-allowed-tag-style</dt>
+    <dd>Regular expression that matches the value for tag style</dd>
+</dl>
+
+<h2>Examples</h2>
+<p>With <code>not-allowed-tag-style= btn-.*</code>
+    the following code snippet would <strong>PASS</strong>:</p>
+<pre>
+    ...
+
+    &lt;button aria-label="Boton" bc-btn sizeButton="Puffy"&gt;PRIMARIO&lt;/button&gt;
+    &lt;button tag="bc-btn"&gt;PRIMARIO&lt;/button&gt;
+    &lt;button aria-label="Boton" bc-btn&gt;PRIMARIO&lt;/button&gt;
+    ...
+</pre>
+<p>the following code snippet would <strong>FAIL</strong>:</p>
+<pre>
+    &lt;button tag="btn-primary"&gt;PRIMARY BUTTON&lt;/button&gt;
+    &lt;button tag="btn-danger"&gt;DANGER BUTTON&lt;/button&gt;
+    &lt;button tag="btn-info"&gt;INFO BUTTON&lt;/button&gt;
+</pre>

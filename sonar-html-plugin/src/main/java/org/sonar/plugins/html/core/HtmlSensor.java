@@ -17,6 +17,7 @@
  */
 package org.sonar.plugins.html.core;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -48,8 +49,11 @@ import org.sonar.plugins.html.api.HtmlConstants;
 import org.sonar.plugins.html.checks.AbstractPageCheck;
 import org.sonar.plugins.html.checks.HtmlIssue;
 import org.sonar.plugins.html.checks.PreciseHtmlIssue;
+import org.sonar.plugins.html.checks.bds.AbstractHtmlCheck;
 import org.sonar.plugins.html.lex.PageLexer;
 import org.sonar.plugins.html.lex.VueLexer;
+import org.sonar.plugins.html.models.Issue;
+import org.sonar.plugins.html.models.Source;
 import org.sonar.plugins.html.rules.CheckClasses;
 import org.sonar.plugins.html.rules.HtmlRulesDefinition;
 import org.sonar.plugins.html.visitor.DefaultNodeVisitor;
@@ -102,7 +106,12 @@ public final class HtmlSensor implements Sensor {
       }
 
       HtmlSourceCode sourceCode = new HtmlSourceCode(inputFile);
-
+      try {
+        Source source = new Source(inputFile);
+        runChecks(sensorContext, source);
+      } catch (IOException e) {
+        LOG.warn("Error reading source file " + inputFile.filename(), e);
+      }
       try (Reader reader = new InputStreamReader(inputFile.inputStream(), inputFile.charset())) {
         PageLexer lexer = inputFile.filename().endsWith(".vue") ? new VueLexer() : new PageLexer();
         scanner.scan(lexer.parse(reader), sourceCode);
@@ -115,6 +124,36 @@ public final class HtmlSensor implements Sensor {
           .onFile(inputFile)
           .message(e.getMessage())
           .save();
+      }
+    }
+  }
+
+  private void runChecks(SensorContext context, Source sourceCode) {
+    for (Object check : checks.all()) {
+      try {
+        ((AbstractHtmlCheck) check).setRuleKey(checks.ruleKey(check));
+        ((AbstractHtmlCheck) check).setHtmlSource(sourceCode);
+        LOG.debug("Checking rule: " + ((AbstractHtmlCheck) check).getRuleKey());
+        ((AbstractHtmlCheck) check).validate();
+      } catch (Exception e) {
+        LOG.warn("Error checking html rule", e);
+      }
+    }
+    saveIssues(context, sourceCode);
+  }
+
+  private void saveIssues(SensorContext context, Source sourceCode) {
+    for (Issue issue : sourceCode.getIssues()) {
+      try {
+        LOG.debug("Saving issue: " + issue.getMessage());
+        NewIssue newIssue = context.newIssue().forRule(issue.getRuleKey());
+        NewIssueLocation location = newIssue.newLocation()
+                .on(sourceCode.getInputFile())
+                .message(issue.getMessage())
+                .at(sourceCode.getInputFile().selectLine(issue.getLine()));
+        newIssue.at(location).save();
+      } catch (Exception e) {
+        LOG.warn("Error saving issue", e);
       }
     }
   }

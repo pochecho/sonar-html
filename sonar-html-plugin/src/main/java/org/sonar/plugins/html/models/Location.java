@@ -15,27 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sonar.plugins.html;
 
-import org.junit.Test;
-import org.sonar.api.Plugin;
-import org.sonar.api.SonarEdition;
-import org.sonar.api.SonarQubeSide;
-import org.sonar.api.internal.SonarRuntimeImpl;
-import org.sonar.api.utils.Version;
+package org.sonar.plugins.html.models;
 
-import static org.assertj.core.api.Assertions.assertThat;
+public class Location {
+    private final int line;
+    private final int column;
 
-/**
- * @author Matthijs Galesloot
- */
-public class HtmlPluginTest {
+    public Location(int line, int column) {
+        this.line = line;
+        this.column = column;
+    }
 
-  //@Test
-  public void webPluginTester() {
-    Plugin.Context context = new Plugin.Context(SonarRuntimeImpl.forSonarQube(Version.create(7, 9), SonarQubeSide.SERVER, SonarEdition.COMMUNITY));
+    public int getLine() {
+        return line;
+    }
 
-    new HtmlPlugin().define(context);
-    assertThat(context.getExtensions()).hasSize(8);
-  }
+    public int getColumn() {
+        return column;
+    }
 }
