@@ -19,17 +19,20 @@
 package org.sonar.plugins.html.checks.bds;
 
 
+import java.io.IOException;
 import java.util.List;
 
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
+import org.sonar.plugins.html.checks.AbstractPageCheck;
+import org.sonar.plugins.html.checks.HtmlIssue;
 import org.sonar.plugins.html.models.ConfigInvalidElementCheck;
-import org.sonar.plugins.html.models.Issue;
+import org.sonar.plugins.html.node.Node;
 
 @Rule(key = "NotAllowedTagCheck")
-public class NotAllowedTagCheck extends AbstractHtmlCheck {
+public class NotAllowedTagCheck extends AbstractPageCheck {
 
     private static final Logger LOGGER = Loggers.get(NotAllowedTagCheck.class);
     public static final String ISSUE_FOUNDED_MESSAGE = "The usage of %s tag/element is not allowed, you have to use %s instead.";
@@ -40,14 +43,14 @@ public class NotAllowedTagCheck extends AbstractHtmlCheck {
     NotAllowedGenericElementCheck notAllowedElementCheck;
 
     @Override
-    public void validate() {
+    public void startDocument(List<Node> nodes){
         ConfigInvalidElementCheck config = new ConfigInvalidElementCheck("<[ ]*([a-zA-Z0-9-_]+)", ISSUE_FOUNDED_MESSAGE,
-                getHtmlSource(), getRuleKey(), false,this.classStyleReg, LOGGER);
+                getHtmlSourceCode().inputFile(), getRuleKey(), false,this.classStyleReg, LOGGER);
 
         this.notAllowedElementCheck = new NotAllowedGenericElementCheck(config);
-        List<Issue> issues = this.notAllowedElementCheck.validate();
-        for (Issue issue : issues) {
-            getHtmlSource().addIssue(issue);
+        List<HtmlIssue> issues = this.notAllowedElementCheck.validate();
+        for (HtmlIssue issue : issues) {
+            getHtmlSourceCode().addIssue(issue);
         }
     }
 

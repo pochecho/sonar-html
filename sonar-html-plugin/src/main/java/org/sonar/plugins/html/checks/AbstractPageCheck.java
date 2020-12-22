@@ -34,26 +34,9 @@ import org.sonar.plugins.html.visitor.DefaultNodeVisitor;
  */
 public abstract class AbstractPageCheck extends DefaultNodeVisitor {
 
-  /**/
-
-  protected Source htmlSource =  getHtmlSourceCode();
-
   public RuleKey getRuleKey() {
     return ruleKey;
   }
-
-
-
-
-  public void setHtmlSource(Source source) {
-    this.htmlSource = source;
-  }
-
-
-  public abstract void validate();
-
-
- /* ---------- */
 
   private RuleKey ruleKey;
 

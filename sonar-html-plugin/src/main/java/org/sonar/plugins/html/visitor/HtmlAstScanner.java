@@ -17,6 +17,7 @@
  */
 package org.sonar.plugins.html.visitor;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.sonar.plugins.html.node.CommentNode;
@@ -65,7 +66,11 @@ public class HtmlAstScanner {
 
     // notify visitors for a new document
     for (DefaultNodeVisitor visitor : visitors) {
-      visitor.startDocument(nodeList);
+      try {
+        visitor.startDocument(nodeList);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
 
     // notify the visitors for start and end of element

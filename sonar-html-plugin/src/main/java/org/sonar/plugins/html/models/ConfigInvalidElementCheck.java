@@ -18,21 +18,22 @@
 
 package org.sonar.plugins.html.models;
 
+import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.Logger;
 
 public class ConfigInvalidElementCheck {
     public final String pattern;
     public final String issueFoundedMessage;
-    public final Source htmlSource;
+    public final InputFile htmlSource;
     public final RuleKey ruleKey;
     public final boolean isMultiline;
 
     public final String classStyleReg;
     public final Logger LOGGER;
 
-    public ConfigInvalidElementCheck(String pattern, String issueFoundedMessage, Source htmlSource, RuleKey ruleKey,
-            boolean isMultiline, String classStyleReg, Logger LOGGER) {
+    public ConfigInvalidElementCheck(String pattern, String issueFoundedMessage, InputFile htmlSource, RuleKey ruleKey,
+                                     boolean isMultiline, String classStyleReg, Logger LOGGER) {
         this.pattern = pattern;
         this.issueFoundedMessage = issueFoundedMessage;
         this.htmlSource = htmlSource;

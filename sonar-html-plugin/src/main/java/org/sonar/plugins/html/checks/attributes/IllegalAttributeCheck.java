@@ -31,9 +31,9 @@ public class IllegalAttributeCheck extends AbstractPageCheck {
   private static final String DEFAULT_ATTRIBUTES = "";
 
   @RuleProperty(
-    key = "attributes",
-    description = "Comma-separated list of tag.attributes that are not allowed. E.G. a.name forbids a \"name\" attribute in an \"a\" tag.",
-    defaultValue = DEFAULT_ATTRIBUTES)
+          key = "attributes",
+          description = "Comma-separated list of tag.attributes that are not allowed. E.G. a.name forbids a \"name\" attribute in an \"a\" tag.",
+          defaultValue = DEFAULT_ATTRIBUTES)
   public String attributes = DEFAULT_ATTRIBUTES;
 
   private QualifiedAttribute[] attributesArray;

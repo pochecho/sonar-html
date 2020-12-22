@@ -17,6 +17,7 @@
  */
 package org.sonar.plugins.html.visitor;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.sonar.plugins.html.node.CommentNode;
@@ -62,7 +63,7 @@ public abstract class DefaultNodeVisitor {
     this.htmlSourceCode = sourceCode;
   }
 
-  public void startDocument(List<Node> nodes) {
+  public void startDocument(List<Node> nodes) throws IOException {
   }
 
   public void startElement(TagNode node) {

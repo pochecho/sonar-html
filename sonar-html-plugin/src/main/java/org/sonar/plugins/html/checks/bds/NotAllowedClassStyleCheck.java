@@ -18,22 +18,19 @@
 
 package org.sonar.plugins.html.checks.bds;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.io.IOException;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
 import org.sonar.plugins.html.checks.AbstractPageCheck;
+import org.sonar.plugins.html.checks.HtmlIssue;
 import org.sonar.plugins.html.models.ConfigInvalidElementCheck;
-import org.sonar.plugins.html.models.Issue;
+import org.sonar.plugins.html.node.Node;
 
 @Rule(key = "NotAllowedClassStyleCheck")
-public class NotAllowedClassStyleCheck extends AbstractHtmlCheck {
+public class NotAllowedClassStyleCheck extends AbstractPageCheck {
 
     private static final Logger LOGGER = Loggers.get(NotAllowedClassStyleCheck.class);
     public static final String ISSUE_FOUNDED_MESSAGE = "The usage of %s class is not allowed, you have to use %s instead.";
@@ -43,16 +40,16 @@ public class NotAllowedClassStyleCheck extends AbstractHtmlCheck {
 
     NotAllowedGenericElementCheck notAllowedElementCheck;
 
-    @Override
-    public void validate() {
-        ConfigInvalidElementCheck config = new ConfigInvalidElementCheck(
-                "class[ ]{0,1}=[ ]{0,1}[\"|']{1}([\r\n \ta-zA-Z0-9-_]+)[\"|']{1}", ISSUE_FOUNDED_MESSAGE, getHtmlSource(),
-                getRuleKey(), true, this.classStyleReg, LOGGER);
 
+    @Override
+    public void startDocument(List<Node> nodes) {
+        ConfigInvalidElementCheck config = new ConfigInvalidElementCheck(
+                "class[ ]{0,1}=[ ]{0,1}[\"|']{1}([\r\n \ta-zA-Z0-9-_]+)[\"|']{1}", ISSUE_FOUNDED_MESSAGE, getHtmlSourceCode().inputFile(),
+                getRuleKey(), true, this.classStyleReg, LOGGER);
         this.notAllowedElementCheck = new NotAllowedGenericElementCheck(config);
-        List<Issue> issues = this.notAllowedElementCheck.validate();
-        for (Issue issue : issues) {
-            getHtmlSource().addIssue(issue);
+        List<HtmlIssue> issues = this.notAllowedElementCheck.validate();
+        for (HtmlIssue issue : issues) {
+            getHtmlSourceCode().addIssue(issue);
         }
     }
 

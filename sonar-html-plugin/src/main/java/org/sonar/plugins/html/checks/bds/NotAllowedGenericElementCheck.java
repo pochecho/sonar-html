@@ -18,6 +18,7 @@
 
 package org.sonar.plugins.html.checks.bds;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.sonar.check.Rule;
+import org.sonar.plugins.html.checks.HtmlIssue;
 import org.sonar.plugins.html.models.*;
 
 public class NotAllowedGenericElementCheck {
@@ -39,13 +41,18 @@ public class NotAllowedGenericElementCheck {
         this.config = config;
     }
 
-    public List<Issue> validate() {
+    public List<HtmlIssue> validate() {
         if (this.config.htmlSource == null) {
             throw new IllegalStateException("Source code not set, cannot validate anything");
         }
         this.getReplacements();
-        List<Issue> issues = new ArrayList<>();
-        String content = this.config.htmlSource.getContents();
+        List<HtmlIssue> issues;
+        String content = null;
+        try {
+            content = this.config.htmlSource.contents();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         if (this.config.isMultiline) {
             issues = this.analyzeMultiline(content);
@@ -57,29 +64,18 @@ public class NotAllowedGenericElementCheck {
         return issues;
     }
 
-    private List<Issue> analyzeMultiline(String content) {
-        List<Issue> issues = new ArrayList<>();
+    private List<HtmlIssue> analyzeMultiline(String content) {
+        List<HtmlIssue> issues = new ArrayList<>();
         String[] fragments = content.split("\n");
 
         int i = 1;
         List<ChunkReplacement[]> issuesClass = getIssuesPerContent(content);
 
-        // for (ChunkReplacement chunkReplacement : issuesClass) {
-
-        // System.out.println("--------- "+chunkReplacement);
-
-        // }
-        String contentTemp = content;
-        int increment = 0;
         for (ChunkReplacement[] chunkReplacements : issuesClass) {
-            System.out.println("upa");
             if (chunkReplacements.length > 0) {
                 for (ChunkReplacement issueClass : chunkReplacements) {
-                    Issue issue = generateIssue(contentTemp, i, issueClass,increment);
-                    contentTemp = content.substring(issue.getColumn() + issueClass.getMatchedValue().length(),
-                            content.length());
+                    HtmlIssue issue = generateIssue(content, i, issueClass);
                     issues.add(issue);
-                    increment+=issue.getColumn();
                 }
             }
         }
@@ -87,8 +83,8 @@ public class NotAllowedGenericElementCheck {
         return issues;
     }
 
-    private List<Issue> analyzeInline(String content) {
-        List<Issue> issues = new ArrayList<>();
+    private List<HtmlIssue> analyzeInline(String content) {
+        List<HtmlIssue> issues = new ArrayList<>();
 
         String[] fragments = content.split("\n");
 
@@ -97,7 +93,7 @@ public class NotAllowedGenericElementCheck {
             ChunkReplacement[] issuesClass = getIssuesPerLine(line);
             if (issuesClass.length > 0) {
                 for (ChunkReplacement issueClass : issuesClass) {
-                    Issue issue = generateIssue(line, i, issueClass,0);
+                    HtmlIssue issue = generateIssue(line, i, issueClass);
                     issues.add(issue);
                 }
             }
@@ -227,15 +223,15 @@ public class NotAllowedGenericElementCheck {
         return intersection;
     }
 
-    private Issue generateIssue(String line, int lineNumber, ChunkReplacement issueClass,int increment) {
+    private HtmlIssue generateIssue(String line, int lineNumber, ChunkReplacement issueClass) {
 
         String message = String.format(this.config.issueFoundedMessage, issueClass.getMatchedValue(),
                 generateSuggestedClass(issueClass));
         this.config.LOGGER.info(message);
         String group = issueClass.getMatchedValue();
-        int column = line.indexOf(group)+increment;
+        int column = line.indexOf(group);
         Location location = new Location(lineNumber, column);
-        Issue issue = new Issue(this.config.ruleKey, location, message);
+        HtmlIssue issue = new HtmlIssue(this.config.ruleKey, lineNumber, message);
         return issue;
     }
 }
