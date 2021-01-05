@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sonar.plugins.html.checks.bds;
+package org.sonar.plugins.html.checks.style;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -23,6 +23,7 @@ import org.sonar.api.utils.log.LogTester;
 import org.sonar.api.utils.log.LoggerLevel;
 import org.sonar.plugins.html.Utils;
 import org.sonar.plugins.html.checks.HtmlIssue;
+import org.sonar.plugins.html.checks.style.NotAllowedClassStyleCheck;
 import org.sonar.plugins.html.visitor.HtmlSourceCode;
 
 import java.io.IOException;
