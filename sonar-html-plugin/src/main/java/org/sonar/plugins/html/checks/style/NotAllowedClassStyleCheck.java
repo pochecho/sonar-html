@@ -16,9 +16,8 @@
  * limitations under the License.
  */
 
-package org.sonar.plugins.html.checks.bds;
+package org.sonar.plugins.html.checks.style;
 
-import java.io.IOException;
 import java.util.List;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
@@ -35,7 +34,7 @@ public class NotAllowedClassStyleCheck extends AbstractPageCheck {
     private static final Logger LOGGER = Loggers.get(NotAllowedClassStyleCheck.class);
     public static final String ISSUE_FOUNDED_MESSAGE = "The usage of %s class is not allowed, you have to use %s instead.";
 
-    @RuleProperty(key = "not-allowed-class", description = "Sentence like the following structure: bc-accordions-group=accordion,mat-accordion")
+    @RuleProperty(key = "not-allowed-class", description = "Sentence like the following structure: valid-tag=invalid-tag1;invalid-tag2;...")
     String classStyleReg;
 
     NotAllowedGenericElementCheck notAllowedElementCheck;

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package org.sonar.plugins.html.checks.bds;
+package org.sonar.plugins.html.checks.style;
 
 import java.io.IOException;
 import java.util.ArrayList;

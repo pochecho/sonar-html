@@ -15,20 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sonar.plugins.html.checks.bds;
+package org.sonar.plugins.html.checks.style;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.utils.log.LogTester;
 import org.sonar.plugins.html.Utils;
 import org.sonar.plugins.html.checks.HtmlIssue;
-import org.sonar.plugins.html.checks.bds.NotAllowedTagCheck;
+import org.sonar.plugins.html.checks.style.NotAllowedTagCheck;
 import org.sonar.plugins.html.visitor.HtmlSourceCode;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.*;
 
 public class NotAllowedTagCheckTest {
